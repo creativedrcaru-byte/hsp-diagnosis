@@ -3,135 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HSP 진단</title>
+  <title>스트레스 진단</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app-shell">
-    <section id="start-screen" class="screen start-screen active" aria-labelledby="start-title">
-      <div class="hero-panel">
-        <p class="eyebrow">Self Understanding Test</p>
-        <h1 id="start-title">HSP 진단</h1>
-        <p class="lead">
-          HSP(Highly Sensitive Person, 매우 민감한 사람) 성향 자가 테스트입니다.
-          의학적 진단이 아니니 참고용으로만 활용하시기 바랍니다.
-        </p>
-
-        <div class="guide-card" aria-labelledby="guide-title">
-          <h2 id="guide-title">테스트 방법</h2>
-          <p>각 문항에 대해 아래 다섯 가지 선택지 중 하나를 선택해주세요.</p>
-          <div class="scale-list" aria-label="응답 선택지">
-            <span><strong>0</strong> 전혀 아니다</span>
-            <span><strong>1</strong> 약간 그렇다</span>
-            <span><strong>2</strong> 어느 정도 그렇다</span>
-            <span><strong>3</strong> 매우 그렇다</span>
-            <span><strong>4</strong> 완전히 그렇다</span>
-          </div>
-          <ul>
-            <li>총 48문항이며, 문항은 한 번에 하나씩 표시됩니다.</li>
-            <li>테스트 중간에는 결과가 표시되지 않습니다.</li>
-            <li>모든 문항에 답한 뒤 최종 결과가 제공됩니다.</li>
-          </ul>
-        </div>
-
-        <button id="start-button" class="primary-button" type="button">진단 시작</button>
+  <main class="page-shell">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">자가 점검</p>
+      <h1 id="page-title">스트레스 진단</h1>
+      <div class="intro-copy">
+        <p>다음 20개 항목은 스트레스가 쌓이면 흔히 나타나는 증상들입니다.</p>
+        <p>제시된 항목 중에서 내게 해당되는 것이 몇 개나 되는지 체크해보세요.</p>
       </div>
+      <p class="notice">
+        이 진단은 의학적 진단이 아니라 현재 상태를 돌아보기 위한 참고용 자가 점검입니다.
+        심한 불안, 우울감, 자해 생각, 일상생활의 어려움이 지속된다면 전문가의 도움을 받으시기 바랍니다.
+      </p>
     </section>
 
-    <section id="question-screen" class="screen question-screen" aria-live="polite" aria-labelledby="question-title">
-      <article class="question-card">
-        <div class="progress-row">
-          <span id="progress-count">1 / 48</span>
-          <span id="progress-percent">0%</span>
-        </div>
-        <div class="progress-track" aria-hidden="true">
-          <div id="progress-fill" class="progress-fill"></div>
-        </div>
+    <form id="stress-form" class="questions" novalidate>
+      <div id="question-list" class="question-list"></div>
+      <p id="form-message" class="form-message" role="alert" aria-live="polite"></p>
+      <button class="primary-button" type="submit">결과 보기</button>
+    </form>
 
-        <p id="question-number" class="question-number">문항 1</p>
-        <h2 id="question-title" class="question-text"></h2>
-
-        <div id="options-list" class="options-list" role="radiogroup" aria-label="답변 선택"></div>
-
-        <div class="question-actions">
-          <button id="prev-button" class="secondary-button" type="button">이전</button>
-        </div>
-      </article>
-    </section>
-
-    <section id="result-screen" class="screen result-screen" aria-labelledby="result-title">
-      <div class="report">
-        <header class="report-header">
-          <p class="eyebrow">48문항 검사 완료</p>
-          <h1 id="result-title">HSP 진단 결과</h1>
-          <p>당신의 민감성은 약점이 아니라, 세상을 깊이 감지하는 방식일 수 있습니다.</p>
-        </header>
-
-        <section class="score-summary" aria-label="점수 요약">
-          <div class="score-badge">
-            <span>최종 점수</span>
-            <strong id="final-score">0점</strong>
-          </div>
-          <div class="score-cards">
-            <div>
-              <span>그룹1 점수</span>
-              <strong id="group-one-score">0점</strong>
-            </div>
-            <div>
-              <span>그룹2 점수</span>
-              <strong id="group-two-score">0점</strong>
-            </div>
-          </div>
-        </section>
-
-        <section class="interpretation-card" aria-labelledby="interpretation-title">
-          <div>
-            <p class="section-kicker">민감성 해석</p>
-            <h2 id="interpretation-title"></h2>
-          </div>
-          <p id="interpretation-description"></p>
-        </section>
-
-        <section class="gauge-card" aria-labelledby="gauge-title">
-          <h2 id="gauge-title">점수 기준</h2>
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <span class="range-blue"></span>
-              <span class="range-yellow"></span>
-              <span class="range-orange"></span>
-              <span class="range-red"></span>
-              <span id="score-marker" class="score-marker"></span>
-            </div>
-            <div class="gauge-labels">
-              <span>-52</span>
-              <span>0</span>
-              <span>30</span>
-              <span>60</span>
-              <span>140</span>
-            </div>
-          </div>
-          <div class="range-table">
-            <div class="blue"><strong>-52 ~ 0</strong><span>자극 추구 성향이 강한 편</span></div>
-            <div class="yellow"><strong>1 ~ 29</strong><span>평균보다 약간 민감한 편</span></div>
-            <div class="orange"><strong>30 ~ 59</strong><span>민감성이 비교적 높은 편</span></div>
-            <div class="red"><strong>60 이상</strong><span>HSP 성향 가능성이 높음</span></div>
-          </div>
-        </section>
-
-        <section class="feature-section" aria-labelledby="feature-title">
-          <h2 id="feature-title">HSP 특징 요약</h2>
-          <div id="feature-grid" class="feature-grid"></div>
-        </section>
-
-        <p class="final-notice">
-          이 테스트는 자기이해를 위한 참고 자료이며,<br>
-          의학적·심리학적 진단을 대신하지 않습니다.
-        </p>
-
-        <div class="result-actions">
-          <button id="restart-button" class="primary-button" type="button">다시 진단하기</button>
-        </div>
+    <section id="result" class="result" aria-live="polite" hidden>
+      <p class="result-label">당신의 스트레스 점수는</p>
+      <div class="score"><span id="score-value">0</span>점 <small>/ 20점</small></div>
+      <div id="result-card" class="result-card">
+        <h2 id="result-title"></h2>
+        <p id="result-description"></p>
       </div>
+      <button id="reset-button" class="secondary-button" type="button">다시 진단하기</button>
     </section>
   </main>
 
