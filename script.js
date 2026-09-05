@@ -100,6 +100,8 @@ const state = {
   answers: Array(QUESTIONS.length).fill(null)
 };
 
+let activeDownloadUrl = null;
+
 const screens = {
   start: document.querySelector("#start-screen"),
   question: document.querySelector("#question-screen"),
@@ -219,6 +221,7 @@ function renderResult() {
 function resetAssessment() {
   state.currentIndex = 0;
   state.answers = Array(QUESTIONS.length).fill(null);
+  clearDownloadLink();
   showScreen(screens.start);
 }
 
@@ -230,6 +233,104 @@ function goToPrevious() {
   renderQuestion();
 }
 
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => {
+    if (typeof canvas.toBlob === "function") {
+      canvas.toBlob(resolve, "image/png");
+      return;
+    }
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const byteString = atob(dataUrl.split(",")[1]);
+    const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
+    const buffer = new ArrayBuffer(byteString.length);
+    const view = new Uint8Array(buffer);
+
+    for (let index = 0; index < byteString.length; index += 1) {
+      view[index] = byteString.charCodeAt(index);
+    }
+
+    resolve(new Blob([buffer], { type: mimeString }));
+  });
+}
+
+function clearDownloadLink() {
+  if (activeDownloadUrl) {
+    URL.revokeObjectURL(activeDownloadUrl);
+    activeDownloadUrl = null;
+  }
+
+  elements.downloadStatus.textContent = "";
+}
+
+function renderDownloadLink(url, fileName) {
+  elements.downloadStatus.innerHTML = "";
+
+  const message = document.createElement("span");
+  message.textContent = "저장 창이 뜨지 않으면 ";
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.textContent = "여기를 눌러 이미지 저장";
+
+  const suffix = document.createElement("span");
+  suffix.textContent = "을 선택하세요.";
+
+  elements.downloadStatus.append(message, link, suffix);
+}
+
+function openImageFallback(canvas) {
+  const imageUrl = canvas.toDataURL("image/png");
+  const fallbackWindow = window.open("", "_blank");
+
+  if (!fallbackWindow) {
+    window.location.href = imageUrl;
+    return;
+  }
+
+  fallbackWindow.document.write(`
+    <!doctype html>
+    <html lang="ko">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HSP 진단 결과 이미지</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 20px;
+            color: #172a3a;
+            background: #fbf8f1;
+            font-family: Arial, sans-serif;
+            text-align: center;
+          }
+
+          p {
+            margin: 0 0 16px;
+            font-weight: 700;
+            line-height: 1.5;
+          }
+
+          img {
+            width: min(100%, 920px);
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 20px 55px rgba(23, 42, 58, 0.18);
+          }
+        </style>
+      </head>
+      <body>
+        <p>이미지를 길게 누르거나 우클릭해서 저장하세요.</p>
+        <img src="${imageUrl}" alt="HSP 진단 결과">
+      </body>
+    </html>
+  `);
+  fallbackWindow.document.close();
+}
+
 async function downloadResultImage() {
   if (typeof window.html2canvas !== "function") {
     elements.downloadStatus.textContent = "이미지 저장 기능을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
@@ -237,34 +338,40 @@ async function downloadResultImage() {
   }
 
   const originalText = elements.downloadButton.textContent;
+  const fileName = "hsp-result.png";
   elements.downloadButton.disabled = true;
   elements.downloadButton.textContent = "이미지 만드는 중...";
   elements.downloadStatus.textContent = "결과지를 이미지로 만들고 있습니다.";
 
   try {
+    clearDownloadLink();
+
     const canvas = await window.html2canvas(elements.resultCapture, {
       backgroundColor: "#ffffff",
-      scale: Math.max(2, window.devicePixelRatio || 1),
+      scale: Math.min(2, window.devicePixelRatio || 1),
       useCORS: true,
       logging: false
     });
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    const blob = await canvasToBlob(canvas);
     if (!blob) {
       throw new Error("PNG blob was not created.");
     }
 
-    const url = URL.createObjectURL(blob);
+    activeDownloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = url;
-    link.download = "HSP-진단-결과.png";
+    link.href = activeDownloadUrl;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1200);
-    elements.downloadStatus.textContent = "결과 이미지가 저장되었습니다.";
+    renderDownloadLink(activeDownloadUrl, fileName);
+
+    if (!("download" in HTMLAnchorElement.prototype)) {
+      openImageFallback(canvas);
+    }
   } catch (error) {
     console.error(error);
-    elements.downloadStatus.textContent = "이미지를 저장하지 못했습니다. 다시 시도해주세요.";
+    elements.downloadStatus.textContent = "이미지를 저장하지 못했습니다. 화면을 새로고침한 뒤 다시 시도해주세요.";
   } finally {
     elements.downloadButton.disabled = false;
     elements.downloadButton.textContent = originalText;
