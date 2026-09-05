@@ -61,80 +61,85 @@
 
     <section id="result-screen" class="screen result-screen" aria-labelledby="result-title">
       <div class="report">
-        <header class="report-header">
-          <p class="eyebrow">48문항 검사 완료</p>
-          <h1 id="result-title">HSP 진단 결과</h1>
-          <p>당신의 민감성은 약점이 아니라, 세상을 깊이 감지하는 방식일 수 있습니다.</p>
-        </header>
+        <div id="result-capture" class="result-capture">
+          <header class="report-header">
+            <p class="eyebrow">48문항 검사 완료</p>
+            <h1 id="result-title">HSP 진단 결과</h1>
+            <p>당신의 민감성은 약점이 아니라, 세상을 깊이 감지하는 방식일 수 있습니다.</p>
+          </header>
 
-        <section class="score-summary" aria-label="점수 요약">
-          <div class="score-badge">
-            <span>최종 점수</span>
-            <strong id="final-score">0점</strong>
-          </div>
-          <div class="score-cards">
+          <section class="score-summary" aria-label="점수 요약">
+            <div class="score-badge">
+              <span>최종 점수</span>
+              <strong id="final-score">0점</strong>
+            </div>
+            <div class="score-cards">
+              <div>
+                <span>그룹1 점수</span>
+                <strong id="group-one-score">0점</strong>
+              </div>
+              <div>
+                <span>그룹2 점수</span>
+                <strong id="group-two-score">0점</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="interpretation-card" aria-labelledby="interpretation-title">
             <div>
-              <span>그룹1 점수</span>
-              <strong id="group-one-score">0점</strong>
+              <p class="section-kicker">민감성 해석</p>
+              <h2 id="interpretation-title"></h2>
             </div>
-            <div>
-              <span>그룹2 점수</span>
-              <strong id="group-two-score">0점</strong>
+            <p id="interpretation-description"></p>
+          </section>
+
+          <section class="gauge-card" aria-labelledby="gauge-title">
+            <h2 id="gauge-title">점수 기준</h2>
+            <div class="gauge-wrap">
+              <div class="gauge">
+                <span class="range-blue"></span>
+                <span class="range-yellow"></span>
+                <span class="range-orange"></span>
+                <span class="range-red"></span>
+                <span id="score-marker" class="score-marker"></span>
+              </div>
+              <div class="gauge-labels">
+                <span>-52</span>
+                <span>0</span>
+                <span>30</span>
+                <span>60</span>
+                <span>140</span>
+              </div>
             </div>
-          </div>
-        </section>
-
-        <section class="interpretation-card" aria-labelledby="interpretation-title">
-          <div>
-            <p class="section-kicker">민감성 해석</p>
-            <h2 id="interpretation-title"></h2>
-          </div>
-          <p id="interpretation-description"></p>
-        </section>
-
-        <section class="gauge-card" aria-labelledby="gauge-title">
-          <h2 id="gauge-title">점수 기준</h2>
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <span class="range-blue"></span>
-              <span class="range-yellow"></span>
-              <span class="range-orange"></span>
-              <span class="range-red"></span>
-              <span id="score-marker" class="score-marker"></span>
+            <div class="range-table">
+              <div class="blue"><strong>-52 ~ 0</strong><span>자극 추구 성향이 강한 편</span></div>
+              <div class="yellow"><strong>1 ~ 29</strong><span>평균보다 약간 민감한 편</span></div>
+              <div class="orange"><strong>30 ~ 59</strong><span>민감성이 비교적 높은 편</span></div>
+              <div class="red"><strong>60 이상</strong><span>HSP 성향 가능성이 높음</span></div>
             </div>
-            <div class="gauge-labels">
-              <span>-52</span>
-              <span>0</span>
-              <span>30</span>
-              <span>60</span>
-              <span>140</span>
-            </div>
-          </div>
-          <div class="range-table">
-            <div class="blue"><strong>-52 ~ 0</strong><span>자극 추구 성향이 강한 편</span></div>
-            <div class="yellow"><strong>1 ~ 29</strong><span>평균보다 약간 민감한 편</span></div>
-            <div class="orange"><strong>30 ~ 59</strong><span>민감성이 비교적 높은 편</span></div>
-            <div class="red"><strong>60 이상</strong><span>HSP 성향 가능성이 높음</span></div>
-          </div>
-        </section>
+          </section>
 
-        <section class="feature-section" aria-labelledby="feature-title">
-          <h2 id="feature-title">HSP 특징 요약</h2>
-          <div id="feature-grid" class="feature-grid"></div>
-        </section>
+          <section class="feature-section" aria-labelledby="feature-title">
+            <h2 id="feature-title">HSP 특징 요약</h2>
+            <div id="feature-grid" class="feature-grid"></div>
+          </section>
 
-        <p class="final-notice">
-          이 테스트는 자기이해를 위한 참고 자료이며,<br>
-          의학적·심리학적 진단을 대신하지 않습니다.
-        </p>
+          <p class="final-notice">
+            이 테스트는 자기이해를 위한 참고 자료이며,<br>
+            의학적·심리학적 진단을 대신하지 않습니다.
+          </p>
+        </div>
 
         <div class="result-actions">
+          <button id="download-button" class="primary-button" type="button">결과 이미지 저장</button>
           <button id="restart-button" class="primary-button" type="button">다시 진단하기</button>
         </div>
+        <p id="download-status" class="download-status" aria-live="polite"></p>
       </div>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

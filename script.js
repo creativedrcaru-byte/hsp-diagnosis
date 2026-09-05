@@ -122,7 +122,10 @@ const elements = {
   interpretationTitle: document.querySelector("#interpretation-title"),
   interpretationDescription: document.querySelector("#interpretation-description"),
   scoreMarker: document.querySelector("#score-marker"),
-  featureGrid: document.querySelector("#feature-grid")
+  featureGrid: document.querySelector("#feature-grid"),
+  resultCapture: document.querySelector("#result-capture"),
+  downloadButton: document.querySelector("#download-button"),
+  downloadStatus: document.querySelector("#download-status")
 };
 
 function showScreen(targetScreen) {
@@ -227,6 +230,47 @@ function goToPrevious() {
   renderQuestion();
 }
 
+async function downloadResultImage() {
+  if (typeof window.html2canvas !== "function") {
+    elements.downloadStatus.textContent = "이미지 저장 기능을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
+    return;
+  }
+
+  const originalText = elements.downloadButton.textContent;
+  elements.downloadButton.disabled = true;
+  elements.downloadButton.textContent = "이미지 만드는 중...";
+  elements.downloadStatus.textContent = "결과지를 이미지로 만들고 있습니다.";
+
+  try {
+    const canvas = await window.html2canvas(elements.resultCapture, {
+      backgroundColor: "#ffffff",
+      scale: Math.max(2, window.devicePixelRatio || 1),
+      useCORS: true,
+      logging: false
+    });
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) {
+      throw new Error("PNG blob was not created.");
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "HSP-진단-결과.png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+    elements.downloadStatus.textContent = "결과 이미지가 저장되었습니다.";
+  } catch (error) {
+    console.error(error);
+    elements.downloadStatus.textContent = "이미지를 저장하지 못했습니다. 다시 시도해주세요.";
+  } finally {
+    elements.downloadButton.disabled = false;
+    elements.downloadButton.textContent = originalText;
+  }
+}
+
 function runInternalChecks() {
   const allFour = Array(48).fill(4);
   const allZero = Array(48).fill(0);
@@ -246,6 +290,7 @@ elements.startButton.addEventListener("click", () => {
 });
 
 elements.prevButton.addEventListener("click", goToPrevious);
+elements.downloadButton.addEventListener("click", downloadResultImage);
 elements.restartButton.addEventListener("click", resetAssessment);
 
 runInternalChecks();
