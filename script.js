@@ -57,6 +57,10 @@ const QUESTIONS = [
   "나는 폭죽 터뜨리는 것을 좋아한다."
 ];
 
+const QUESTION_NOTES = {
+  5: "작은 자극에도 쉽게 반응한다."
+};
+
 const RESULT_RANGES = [
   {
     min: -52,
@@ -117,6 +121,7 @@ const elements = {
   progressFill: document.querySelector("#progress-fill"),
   questionNumber: document.querySelector("#question-number"),
   questionTitle: document.querySelector("#question-title"),
+  questionNote: document.querySelector("#question-note"),
   optionsList: document.querySelector("#options-list"),
   groupOneScore: document.querySelector("#group-one-score"),
   groupTwoScore: document.querySelector("#group-two-score"),
@@ -168,6 +173,8 @@ function renderQuestion() {
   elements.progressFill.style.width = `${progress}%`;
   elements.questionNumber.textContent = `문항 ${questionNumber}`;
   elements.questionTitle.textContent = QUESTIONS[state.currentIndex];
+  elements.questionNote.textContent = QUESTION_NOTES[state.currentIndex] ?? "";
+  elements.questionNote.hidden = !QUESTION_NOTES[state.currentIndex];
   elements.prevButton.disabled = state.currentIndex === 0;
   elements.optionsList.innerHTML = "";
 

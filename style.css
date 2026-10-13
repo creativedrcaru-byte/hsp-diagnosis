@@ -230,6 +230,14 @@ h1 {
   line-height: 1.45;
 }
 
+.question-note {
+  margin: -14px 0 26px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .options-list {
   display: grid;
   gap: 12px;
